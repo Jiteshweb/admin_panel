@@ -3,10 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Files;
 use Session;
 use Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
+
 
 class LoginController extends Controller
 {
@@ -50,7 +56,11 @@ class LoginController extends Controller
 
                 // Check if the user is an admin (user type 1)
                 if ($user->usertype == 1) {
-                    $request->session()->put('user', $user);
+                    $request->session()->put('user', [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'usertype' => $user->usertype,
+                    ]);
                     return redirect()->route('dashboard')->with('success', 'Signed in as admin');
                 }
 
@@ -96,5 +106,103 @@ class LoginController extends Controller
             return redirect()->back()->with('error', 'An error occurred while changning password');
         }
 
+    }
+    public function imageUpload(Request $request)
+    {
+        if ($request->session()->has('user')) {
+            $user = $request->session()->get('user');
+
+            if (!isset($user['usertype']) || !isset($user['id'])) {
+                return redirect()->back()->with('error', 'Invalid session data.');
+            }
+
+            $userType = $user['usertype'];
+            $userId = $user['id'];
+
+            if ($userType == '1') {
+                $fileName = time() . '.' . $request->imagefile->getClientOriginalExtension();
+                $request->imagefile->storeAs('public/admin_img', $fileName);
+            } elseif ($userType == '0') {
+                $fileName = time() . '.' . $request->imagefile->getClientOriginalExtension();
+                $request->imagefile->storeAs('public/img', $fileName);
+            } else {
+                return redirect()->back()->with('error', 'Invalid user type.');
+            }
+
+            $image = new Image;
+
+            $image->user_id = $userId;
+            $image->usertype_id = $userType;
+            $image->imagefile = $fileName;
+            $image->save();
+
+            return redirect()->back()->with('success', 'Image uploaded successfully.');
+        }
+
+        return redirect()->back()->with('error', 'No user session found.');
+    }
+
+    public function imageDisplay(Request $request)
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+            $images = Image::where('user_id', $user->id)->get();
+
+            if ($images->isNotEmpty()) {
+                return view('images', compact('images'));
+            } else {
+                return view('images', ['images' => []])->with('message', 'No images found.');
+            }
+        } else {
+            return redirect('login')->with('message', 'Please log in to view your images.');
+        }
+    }
+    public function editImage($id)
+    {
+        $images = Image::find($id);
+        return view('update_image', compact('images'));
+    }
+    public function updateImage(Request $request, $id)
+    {
+        $images = Image::find($id);
+        if ($request->hasfile('imagefile')) {
+            if ($images->usertype_id === '1') {
+                $path = 'public/storage/admin_img/' . $images->imagefile;
+            } else {
+                $path = 'public/storage/img/' . $images->imagefile;
+            }
+            if (File::exists($path)) {
+                (File::delete($path));
+            }
+            if ($images->usertype_id == '1') {
+                $fileName = time() . '.' . $request->imagefile->getClientOriginalExtension();
+                $request->imagefile->storeAs('public/admin_img', $fileName);
+            } elseif ($images->usertype_id == '0') {
+                $fileName = time() . '.' . $request->imagefile->getClientOriginalExtension();
+                $request->imagefile->storeAs('public/img', $fileName);
+            } else {
+                return redirect()->back()->with('error', 'Invalid user type.');
+            }
+            $images->imagefile = $fileName;
+        }
+        $images->update();
+        return redirect()->back()->with('success', 'Student Image Updated Successfully');
+
+
+    }
+
+    public function destroy($id)
+    {
+        $images = Image::find($id);
+        if ($images->usertype_id === '1') {
+            $path = 'public/storage/admin_img/' . $images->imagefiles;
+        } else {
+            $path = 'public/storage/img/' . $images->imagefiles;
+        }
+        if (File::exists($path)) {
+            File::delete($path);
+        }
+        $images->delete();
+        return redirect()->back()->with('success', 'Image deleted');
     }
 }

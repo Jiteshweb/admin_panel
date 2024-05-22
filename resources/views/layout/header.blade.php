@@ -23,19 +23,19 @@
                                         class="img-responsive rounded-circle"
                                         src="{{ asset('images/layout_img/user_img.jpg') }}" alt="#" /><span
                                         class="name_user">
-                                        {{ Session::get('user')['name'] }}</span></a>
+                                        {{ Session::get('user')['name'] ?? 'Guest' }}
+                                    </span></a>
                                 <div class="dropdown-menu">
 
-                                    <a class="dropdown-item" href="profile.html">My Profile</a>
-                                    <a class="dropdown-item" href="settings.html">Settings</a>
-                                    <a class="dropdown-item" href="help.html">Help</a>
+                                    <a class="dropdown-item" href="{{ route('profile') }}">My Profile</a>
+                                    <a class="dropdown-item" href="{{ route('setting') }}">Settings</a>
+                                    <a class="dropdown-item" href="#">Help</a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"><span>Log Out</span> <i
                                             class="fa fa-sign-out"></i></a>
 
                                 </div>
                             @else
-                            <a class="dropdown-item" href="{{ route('login') }}"><span>Log In</span> <i
-                                ></i></a>
+                                <a class="dropdown-item" href="{{ route('login') }}"><span>Log In</span> <i></i></a>
                             @endif
                         </li>
                     </ul>

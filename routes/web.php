@@ -19,9 +19,11 @@ use App\Http\Controllers\LoginController;
 Route::get('dashboard', function () {
     return view('sidbar-pages.dashboard.dashboard');
 })->name('index');
-Route::get('addtasks',[ClientUpdateTaskController::class,'addTask'])->name('addtasks');
-Route::get('/dashboard-2',[ClientUpdateTaskController::class,'showTasks'])->name('dashboard');
-Route::get('/load-more', [ClientUpdateTaskController::class,'loadMore'])->name('loadMore');
+Route::get('addtasks', [ClientUpdateTaskController::class, 'addTask'])->name('addtasks');
+Route::post('status', [ClientUpdateTaskController::class, 'status'])->name('status');
+Route::get('/dashboard-2', [ClientUpdateTaskController::class, 'showTasks'])->name('dashboard');
+// Route::get('addupdates',[ClientUpdateTaskController::class,'addUpdates'])->name('addupdates');
+Route::get('/load-more', [ClientUpdateTaskController::class, 'loadMore'])->name('loadMore');
 
 Route::get('genral-element', function () {
     return view('sidbar-pages.element.genral-element');
@@ -65,11 +67,11 @@ Route::get('/', function () {
 Route::get('register', function () {
     return view('sidbar-pages.additional-pages.register');
 })->name('register');
-Route::post('register',[LoginController::class,'register'])->name('signup');
-Route::post('login',[LoginController::class,'login'])->name('log');
-Route::get('logout',[LoginController::class,'logout'])->name('logout');
-Route::post('forgotpassword',[LoginController::class,'forgotpassword'])->name('forgotpassword');
-Route::get('forgotpasswordpage',[LoginController::class,'forgotpasswordpage'])->name('forgotpasswordpage');
+Route::post('register', [LoginController::class, 'register'])->name('signup');
+Route::post('login', [LoginController::class, 'login'])->name('log');
+Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+Route::post('forgotpassword', [LoginController::class, 'forgotpassword'])->name('forgotpassword');
+Route::get('forgotpasswordpage', [LoginController::class, 'forgotpasswordpage'])->name('forgotpasswordpage');
 Route::get('projects', function () {
     return view('sidbar-pages.additional-pages.projects');
 })->name('projects');
@@ -90,3 +92,9 @@ Route::get('charts', function () {
 // Route::get('dashboard-2', [DynamicController::class, 'index2'])->name('dashboard');
 
 // Route::get('pluto-admin-panel/{page}', [DynamicController::class, 'dynamic'])->name('dashboard');
+Route::post('imageUpload', [LoginController::class, 'imageUpload'])->name('imageUpload');
+Route::get('imagedisplay', [LoginController::class, 'imageDisplay'])->name('imagedisplay');
+Route::delete('imagedelete/{id}', [LoginController::class, 'destroy'])->name('imagedelete');
+Route::get('editimage/{id}', [LoginController::class,'editImage'])->name('editupdate');
+Route::put('imageupdate/{id}', [LoginController::class, 'updateImage'])->name('updateImage');
+

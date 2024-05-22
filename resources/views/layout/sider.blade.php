@@ -14,8 +14,8 @@
                         alt="#" />
                 </div>
                 <div class="user_info">
-                    @if (Session::has('user'))
-                        <h6> {{ Session::get('user')['name'] }}</h6>
+                    @if (Session::has('user') && isset(Session::get('user')['name']))
+                        <h6>{{ Session::get('user')['name'] }}</h6>
                     @endif
                     <p><span class="online_animation"></span> Online</p>
                 </div>

@@ -21,11 +21,17 @@
                             </div>
                         </div>
                         <div class="full price_table padding_infor_info">
+                            <form action="{{ route('imageUpload') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                Select image to upload:
+                                <input type="file" name="imagefile" id="fileToUpload">
+                                <input type="submit" value="Upload Image" name="submit" value="Search">
+                            </form>
                             <div class="row">
                                 <!-- user profile section -->
                                 <!-- profile image -->
-                                <div class="col-lg-12">
-                                    <div class="full dis_flex center_text">
+                                <div class="full dis_flex center_text">
+                                    <div class="col-lg-12">
                                         <div class="profile_img"><img width="180" class="rounded-circle"
                                                 src="{{ asset('images/layout_img/user_img.jpg') }}" alt="#" /></div>
                                         <div class="profile_contant">
@@ -99,7 +105,8 @@
                                                         <div class="msg_list_main">
                                                             <ul class="msg_list">
                                                                 <li>
-                                                                    <span><img src="{{asset('images/layout_img/msg2.png')}}"
+                                                                    <span><img
+                                                                            src="{{ asset('images/layout_img/msg2.png') }}"
                                                                             class="img-responsive" alt="#"></span>
                                                                     <span>
                                                                         <span class="name_user">Taison Jack</span>
@@ -109,7 +116,8 @@
                                                                     </span>
                                                                 </li>
                                                                 <li>
-                                                                    <span><img src="{{asset('images/layout_img/msg3.png')}}"
+                                                                    <span><img
+                                                                            src="{{ asset('images/layout_img/msg3.png') }}"
                                                                             class="img-responsive" alt="#"></span>
                                                                     <span>
                                                                         <span class="name_user">Mike John</span>
@@ -156,6 +164,7 @@
                 </div>
                 <!-- end row -->
             </div>
+            <h1><a href="{{ route('imagedisplay') }}">Uploded Images</a></h1>
             <!-- footer -->
             <div class="container-fluid">
                 <div class="footer">

@@ -1702,6 +1702,7 @@ a[data-toggle="collapse"] {
     position: absolute;
     right: 0;
     bottom: -54px;
+    margin-bottom: -63px;
 }
 
 .plus_green_bt a {
@@ -3414,4 +3415,14 @@ table.projects tr td:first-child {
 #map {
     height: 100%;
     min-height: 720px;
+}
+
+.status-dropdown
+{
+    height: 27px;
+    margin-top: 50px
+}
+.update
+{
+    margin-top: 45px;
 }

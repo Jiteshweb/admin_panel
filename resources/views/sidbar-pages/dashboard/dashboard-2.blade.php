@@ -310,14 +310,16 @@
                     <div class="dash_blog">
                         <div class="dash_blog_inner">
                             <div class="dash_head">
-                                @if (Session::has('user') && Session::get('user')->usertype == 1)
+                                @if (Session::has('user') && Session::get('user')['usertype'] === '1')
                                     <form action="{{ route('addtasks') }}" method="GET">
-                                        <h3><span><i class="fa fa-calendar"></i> 6 July 2018</span><span
-                                                class="plus_green_bt">
+                                        <h4><span><i class="fa fa-calendar"></i> 6 July 2018</span><span class="">
+                                                <input type="text" id="myInput" name="assignee"
+                                                    placeholder="Name..." onclick="newElement()" class="addBtn">
+                                                <br><br>
                                                 <input type="text" id="myInput" name="task"
                                                     placeholder="Title..." onclick="newElement()" class="addBtn">
                                                 <button type="submit">+</button>
-                                            </span></h3>
+                                            </span></h4>
                                     </form>
                                 @else
                                     <h3><span><i class="fa fa-calendar"></i> 6 July 2018</span><span
@@ -333,8 +335,11 @@
                         <div class="task_list_main">
                             <ul class="task_list">
                                 @foreach ($admin as $msg)
-                                    <li><a
+                                    <li>
+                                        <h4>For {{ $msg['assignee'] }}</h4>
+                                        <a
                                             href="#">{{ $msg['task'] }}</a><br><strong>{{ $msg['created_at'] }}</strong>
+
                                     </li>
                                 @endforeach
 
@@ -342,8 +347,7 @@
                         </div>
 
                         <div class="read_more">
-                            <div class="center"><a id="show" class="main_bt read_bt"
-                                    href="{{ route('loadMore') }}">Read
+                            <div class="center"><a id="show" class="main_bt read_bt" href="#">Read
                                     More</a>
                             </div>
                         </div>
@@ -363,40 +367,33 @@
                         <div class="msg_list_main">
                             <ul class="msg_list">
                                 <li>
-                                    <span><img src="images/layout_img/msg2.png" class="img-responsive"
-                                            alt="#" /></span>
-                                    <span>
-                                        <span class="name_user">John Smith</span>
-                                        <span class="msg_user">Sed ut perspiciatis unde omnis.</span>
-                                        <span class="time_ago">12 min ago</span>
-                                    </span>
-                                </li>
-                                <li>
-                                    <span><img src="images/layout_img/msg3.png" class="img-responsive"
-                                            alt="#" /></span>
-                                    <span>
-                                        <span class="name_user">John Smith</span>
-                                        <span class="msg_user">On the other hand, we denounce.</span>
-                                        <span class="time_ago">12 min ago</span>
-                                    </span>
-                                </li>
-                                <li>
-                                    <span><img src="images/layout_img/msg2.png" class="img-responsive"
-                                            alt="#" /></span>
-                                    <span>
-                                        <span class="name_user">John Smith</span>
-                                        <span class="msg_user">Sed ut perspiciatis unde omnis.</span>
-                                        <span class="time_ago">12 min ago</span>
-                                    </span>
-                                </li>
-                                <li>
-                                    <span><img src="images/layout_img/msg3.png" class="img-responsive"
-                                            alt="#" /></span>
-                                    <span>
-                                        <span class="name_user">John Smith</span>
-                                        <span class="msg_user">On the other hand, we denounce.</span>
-                                        <span class="time_ago">12 min ago</span>
-                                    </span>
+                                    @foreach ($status as $state)
+                                        @foreach ($updates as $task)
+                                            <span><img src="images/layout_img/msg2.png" class="img-responsive"
+                                                    alt="#" /></span>
+                                            <span>
+                                                <span class="name_user">{{ $task['assignee'] }}</span>
+                                                <span class="msg_user">{{ $task['task'] }}</span>
+                                                <span class="time_ago">{{ $task['updated_at'] }}</span>
+
+                                            </span>
+
+                                            @if ($state['status'] == 'Complete' || $state['status'] == 'Ongoing')
+                                                <h4 class="update">{{ $state['status'] }}</h4>
+                                            @else
+                                                <form action="{{ route('status') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="task_id" value="{{ $task['task_id'] }}">
+                                                    <select class="status-dropdown" name="status">
+                                                        <option value="" selected disabled>Select..</option>
+                                                        <option value="Complete">Complete</option>
+                                                        <option value="Ongoing">Ongoing</option>
+                                                    </select>
+                                                    <input type="submit" value="Submit">
+                                                </form>
+                                            @endif
+                                        @endforeach
+                                    @endforeach
                                 </li>
                             </ul>
                         </div>
@@ -418,39 +415,4 @@
     </div>
     </div>
     <!-- end dashboard inner -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            var page = 1; // initialize page counter
-
-            $('#show').on('click', function(e) {
-                e.preventDefault();
-
-                $.ajax({
-                    url: '{{ route('loadMore') }}', // URL to fetch more data
-                    method: 'GET',
-                    data: {
-                        page: sidbar - pages.dashboard.dashboard - 2
-                    }, // send current page number to server
-                    success: function(response) {
-                        if (response.length > 0) {
-                            var html = '';
-                            response.forEach(function(msg) {
-                                html += '<li><a href="#">' + msg.task +
-                                    '</a><br><strong>' + msg.created_at +
-                                    '</strong></li>';
-                            });
-                            $('.task_list').append(html);
-                            page++; // increment page counter
-                        } else {
-                            $('#show').hide(); // hide button if no more data
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(error);
-                    }
-                });
-            });
-        });
-    </script>
 @endsection
